@@ -1,0 +1,9 @@
+src/__pycache__
+src/domain/__pycache__
+src/repository/__pycache__
+src/service/__pycache__
+src/useCase/__pycache__
+test/__pycache__
+test/doubles/__pycache__
+test/useCase/__pycache__
+test/.pytest_cache
