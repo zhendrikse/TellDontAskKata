@@ -7,3 +7,4 @@ test/__pycache__
 test/doubles/__pycache__
 test/useCase/__pycache__
 test/.pytest_cache
+.breakpoints

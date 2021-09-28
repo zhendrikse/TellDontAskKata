@@ -1,8 +1,5 @@
-from src.domain.OrderStatus import OrderStatus
 from src.repository.OrderRepository import OrderRepository
 from src.service.ShipmentService import ShipmentService
-from src.useCase.OrderCannotBeShippedError import OrderCannotBeShippedError
-from src.useCase.OrderCannotBeShippedTwiceError import OrderCannotBeShippedTwiceError
 from src.useCase.OrderShipmentRequest import OrderShipmentRequest
 
 
@@ -13,14 +10,7 @@ class OrderShipmentUseCase(object):
 
     def run(self, request: OrderShipmentRequest):
         order = self.order_repository.get_by_id(request.get_order_id())
-
-        if order.get_status() is OrderStatus.CREATED or order.get_status() is OrderStatus.REJECTED:
-            raise OrderCannotBeShippedError()
-
-        if order.get_status() is OrderStatus.SHIPPED:
-            raise OrderCannotBeShippedTwiceError()
-
+        order.check_shipment()
         self.shipment_service.ship(order)
-
-        order.set_status(OrderStatus.SHIPPED)
+        order.shipped()
         self.order_repository.save(order)
