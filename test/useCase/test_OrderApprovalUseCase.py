@@ -18,7 +18,9 @@ class TestOrderApprovalUseCase(unittest.TestCase):
         self.use_case = OrderApprovalUseCase(self.order_repository)
 
     def test_approved_existing_Order(self):
-        initial_order = Order(1)
+        initial_order = Order()
+        initial_order.set_status(OrderStatus.CREATED)
+        initial_order.set_id(1)
         self.order_repository.add_order(initial_order)
 
         request = OrderApprovalRequest()
@@ -31,7 +33,9 @@ class TestOrderApprovalUseCase(unittest.TestCase):
         assert_that(saved_order.get_status(), is_(OrderStatus.APPROVED))
 
     def test_rejected_existing_order(self):
-        initial_order = Order(1)
+        initial_order = Order()
+        initial_order.set_status(OrderStatus.CREATED)
+        initial_order.set_id(1)
         self.order_repository.add_order(initial_order)
 
         request = OrderApprovalRequest()
@@ -44,9 +48,10 @@ class TestOrderApprovalUseCase(unittest.TestCase):
         assert_that(saved_order.get_status(), is_(OrderStatus.REJECTED))
 
     def test_cannot_approve_rejected_order(self):
-        rejected_order = Order(1)
-        rejected_order.reject()
-        self.order_repository.add_order(rejected_order)
+        initial_order = Order()
+        initial_order.set_status(OrderStatus.REJECTED)
+        initial_order.set_id(1)
+        self.order_repository.add_order(initial_order)
 
         request = OrderApprovalRequest()
         request.set_order_id(1)
@@ -56,9 +61,10 @@ class TestOrderApprovalUseCase(unittest.TestCase):
         assert_that(self.order_repository.get_saved_order(), is_(none()))
 
     def test_cannot_reject_approved_order(self):
-        approved_order = Order(1)
-        approved_order.approve()
-        self.order_repository.add_order(approved_order)
+        initial_order = Order()
+        initial_order.set_status(OrderStatus.APPROVED)
+        initial_order.set_id(1)
+        self.order_repository.add_order(initial_order)
 
         request = OrderApprovalRequest()
         request.set_order_id(1)
@@ -68,10 +74,10 @@ class TestOrderApprovalUseCase(unittest.TestCase):
         assert_that(self.order_repository.get_saved_order(), is_(none()))
 
     def test_shipped_orders_cannot_be_approved(self):
-        shipped_order = Order(1)
-        shipped_order.approve()
-        shipped_order.shipped()
-        self.order_repository.add_order(shipped_order)
+        initial_order = Order()
+        initial_order.set_status(OrderStatus.SHIPPED)
+        initial_order.set_id(1)
+        self.order_repository.add_order(initial_order)
 
         request = OrderApprovalRequest()
         request.set_order_id(1)
@@ -81,10 +87,10 @@ class TestOrderApprovalUseCase(unittest.TestCase):
         assert_that(self.order_repository.get_saved_order(), is_(none()))
 
     def test_shipped_orders_cannot_be_rejected(self):
-        shipped_order = Order(1)
-        shipped_order.approve()
-        shipped_order.shipped()
-        self.order_repository.add_order(shipped_order)
+        initial_order = Order()
+        initial_order.set_status(OrderStatus.SHIPPED)
+        initial_order.set_id(1)
+        self.order_repository.add_order(initial_order)
 
         request = OrderApprovalRequest()
         request.set_order_id(1)

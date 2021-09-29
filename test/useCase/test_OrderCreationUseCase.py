@@ -18,9 +18,19 @@ class TestOrderCreationUseCase(unittest.TestCase):
     def setUp(self):
         self.order_repository = TestOrderRepository()
 
-        food = Category("food", decimal.Decimal("10"))
-        product1 = Product("salad", decimal.Decimal("3.56"), food)
-        product2 = Product("tomato", decimal.Decimal("4.65"), food)
+        food = Category()
+        food.set_name("food")
+        food.set_tax_percentage(decimal.Decimal("10"))
+
+        product1 = Product()
+        product1.set_name("salad")
+        product1.set_price(decimal.Decimal("3.56"))
+        product1.set_category(food)
+
+        product2 = Product()
+        product2.set_name("tomato")
+        product2.set_price(decimal.Decimal("4.65"))
+        product2.set_category(food)
 
         productCatalog = InMemoryProductCatalog([product1, product2])
         self.use_case = OrderCreationUseCase(self.order_repository, productCatalog)

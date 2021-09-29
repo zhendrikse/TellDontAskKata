@@ -19,9 +19,10 @@ class TestOrderShipmentUseCase(unittest.TestCase):
         self.use_case = OrderShipmentUseCase(self.order_repository, self.shipment_service)
 
     def test_ship_approved_order(self):
-        approved_order = Order(1)
-        approved_order.approve()
-        self.order_repository.add_order(approved_order)
+        initial_order = Order()
+        initial_order.set_id(1)
+        initial_order.set_status(OrderStatus.APPROVED)
+        self.order_repository.add_order(initial_order)
 
         request = OrderShipmentRequest()
         request.set_order_id(1)
@@ -29,10 +30,12 @@ class TestOrderShipmentUseCase(unittest.TestCase):
         self.use_case.run(request)
 
         assert_that(self.order_repository.get_saved_order().get_status(), is_(OrderStatus.SHIPPED))
-        assert_that(self.shipment_service.get_shipped_order(), is_(approved_order))
+        assert_that(self.shipment_service.get_shipped_order(), is_(initial_order))
 
     def test_created_orders_cannot_be_shipped(self):
-        initialOrder = Order(1)
+        initialOrder = Order()
+        initialOrder.set_id(1)
+        initialOrder.set_status(OrderStatus.CREATED)
         self.order_repository.add_order(initialOrder)
 
         request = OrderShipmentRequest()
@@ -43,9 +46,10 @@ class TestOrderShipmentUseCase(unittest.TestCase):
         assert_that(self.shipment_service.get_shipped_order(), is_(none()))
 
     def test_rejected_orders_cannot_be_shipped(self):
-        rejected_order = Order(1)
-        rejected_order.reject()
-        self.order_repository.add_order(rejected_order)
+        initialOrder = Order()
+        initialOrder.set_id(1)
+        initialOrder.set_status(OrderStatus.REJECTED)
+        self.order_repository.add_order(initialOrder)
 
         request = OrderShipmentRequest()
         request.set_order_id(1)
@@ -55,10 +59,10 @@ class TestOrderShipmentUseCase(unittest.TestCase):
         assert_that(self.shipment_service.get_shipped_order(), is_(none()))
 
     def test_shipped_orders_cannot_be_shipped_again(self):
-        shipped_order = Order(1)
-        shipped_order.approve()
-        shipped_order.shipped()
-        self.order_repository.add_order(shipped_order)
+        initialOrder = Order()
+        initialOrder.set_id(1)
+        initialOrder.set_status(OrderStatus.SHIPPED)
+        self.order_repository.add_order(initialOrder)
 
         request = OrderShipmentRequest()
         request.set_order_id(1)
