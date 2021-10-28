@@ -1,1 +1,2 @@
-run="python -m unittest"
+onBoot  = "python -m http.server 8000 -d htmlcov"
+run="coverage run -m unittest && coverage report -m && coverage html"
