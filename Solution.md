@@ -64,20 +64,31 @@ class Product(object):
 
 
 ## Remove setters from [Order.py](TellDontAskKata#src/domain/Order.py)
-1. Move the approve logic from [OrderApprovalUseCase.py](TellDontAskKata#src/useCase/OrderApprovalUseCase.py) to [Order.py](TellDontAskKata#src/domain/Order.py):
+
+1. Move the approve logic from [OrderApprovalUseCase.py](TellDontAskKata#src/useCase/OrderApprovalUseCase.py) to [Order.py](TellDontAskKata#src/domain/Order.py) by first extracting the `request.is_approved()` into a separate variable and then using the extract-method refactoring:
   ```python
   def approve(self, isOrderApproved: bool):
+    if self.status is OrderStatus.SHIPPED:
+        raise ShippedOrdersCannotBeChangedError()
+
+    if isOrderApproved and self.status is OrderStatus.REJECTED:
+        raise RejectedOrderCannotBeApprovedError()
+
+    if not isOrderApproved and self.status is OrderStatus.APPROVED:
+        raise ApprovedOrderCannotBeRejectedError()
+
+    self.status = OrderStatus.APPROVED if isOrderApproved else OrderStatus.REJECTED  
   ```
 
 2. Create order constructor in [Order.py](TellDontAskKata#src/domain/Order.py):
   ```python
   def __init__(self, order_id:int, currency:str = "EUR"):
-      self.status = OrderStatus.CREATED
-      self.items= []
-      self.currency= "EUR"
-      self.total = Decimal("0.00")
-      self.tax = Decimal("0.00")
-      self.id = order_id  
+    self.status = OrderStatus.CREATED
+    self.items= []
+    self.currency= "EUR"
+    self.total = Decimal("0.00")
+    self.tax = Decimal("0.00")
+    self.id = order_id  
   ```
   and use it in [OrderApprovalUseCase.py](TellDontAskKata#src/useCase/OrderApprovalUseCase.py) and test cases. The `set_id()` can now be removed from [Order.py](TellDontAskKata#src/domain/Order.py).
 

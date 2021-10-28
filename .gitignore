@@ -8,3 +8,5 @@ test/doubles/__pycache__
 test/useCase/__pycache__
 test/.pytest_cache
 .breakpoints
+.coverage
+htmlcov

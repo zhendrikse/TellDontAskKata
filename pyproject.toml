@@ -7,6 +7,7 @@ authors = ["Your Name <you@example.com>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 PyHamcrest = "^2.0.2"
+coverage = "^6.0.2"
 
 [tool.poetry.dev-dependencies]
 
