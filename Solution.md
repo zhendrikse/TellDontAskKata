@@ -194,3 +194,15 @@ order.check_shipment()
     The tax arguments can now be removed from the `OrderItem` constructor.
 
   - Finally, the `set_items()`, `set_currency()`, `set_total()`, and `set_tax()` can be removed from [Order.py](TellDontAskKata#src/domain/Order.py).
+
+  7. Use Python [data classes](https://towardsdatascience.com/9-reasons-why-you-should-start-using-python-dataclasses-98271adadc66) for the implementation of the value objects such as the [Category](TellDontAskKata#src/domain/Category.py):
+
+  ```python
+  import decimal
+  from dataclasses import dataclass
+
+  @dataclass(frozen = True)
+  class Category(object):
+    name: str
+    tax_percentage: decimal.Decimal
+  ``` 
